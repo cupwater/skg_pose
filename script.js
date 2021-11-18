@@ -100,7 +100,7 @@ const pose = new Pose({
     }
     else
     {
-      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.0/${file}`;
+      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.1/${file}`;
     }
     // return `${file}`;
   },
@@ -135,7 +135,7 @@ const faceMesh = new FaceMesh({
     }
     else
     {
-      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.0/${file}`;
+      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.1/${file}`;
     }
     // return `${file}`;
   }
