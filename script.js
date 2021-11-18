@@ -128,13 +128,13 @@ function onResults(results) {
     }
     abdo_list.push(results.poseLandmarks[0]);
 
-    abdo_list.push(c_eye);
-    abdo_list.push(c_mouth);
+    // abdo_list.push(c_eye);
+    // abdo_list.push(c_mouth);
 
-    for (var i=0; i<11; i++)
-    {
-      abdo_list.push(results.poseLandmarks[i]);
-    }
+    // for (var i=0; i<11; i++)
+    // {
+    //   abdo_list.push(results.poseLandmarks[i]);
+    // }
 
     drawLandmarks(
       canvasCtx,
