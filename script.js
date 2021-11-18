@@ -45,50 +45,47 @@ function onResults(results) {
     canvasElement.height
   );
 
-  if (!('poseLandmarks' in results))
+  if ('poseLandmarks' in results)
   {
-    canvasCtx.restore();
-    return;
+
+    body_idxs = [11,12,13,14,15,16,23,24];
+    var abdo_list = []; 
+    for (var i=0; i<8; i++)
+    {
+      abdo_list.push(results.poseLandmarks[body_idxs[i]])
+    }
+
+    c_ab_x = (results.poseLandmarks[23].x + results.poseLandmarks[24].x) / 2;
+    c_ab_y = (results.poseLandmarks[23].y + results.poseLandmarks[24].y) / 2;
+    c_ab_z = (results.poseLandmarks[23].z + results.poseLandmarks[24].z) / 2;
+    c_ab_v = (results.poseLandmarks[23].visibility + results.poseLandmarks[24].visibility) / 2;
+
+    c_sh_x = (results.poseLandmarks[11].x + results.poseLandmarks[12].x) / 2;
+    c_sh_y = (results.poseLandmarks[11].y + results.poseLandmarks[12].y) / 2;
+    c_sh_z = (results.poseLandmarks[11].z + results.poseLandmarks[12].z) / 2;
+    c_sh_v = (results.poseLandmarks[11].visibility + results.poseLandmarks[12].visibility) / 2;
+
+    ratio_list = [1.5, 3, 6];
+    abdo_list.push({'x': c_sh_x, 'y':c_sh_y, 'z': c_sh_z, 'visibility': c_sh_v});
+    for (var i=0; i<3; i++)
+    { 
+      ratio = ratio_list[i];
+      _x = (c_sh_x + (ratio - 1) * c_ab_x) / ratio;
+      _y = (c_sh_y + (ratio - 1) * c_ab_y) / ratio;
+      _z = (c_sh_z + (ratio - 1) * c_ab_z) / ratio;
+      _v = (c_sh_v + (ratio - 1) * c_ab_v) / ratio;
+      abdo_list.push({'x': _x, 'y':_y, 'z': _z, 'visibility': _v})
+    }
+    drawLandmarks(
+      canvasCtx,
+      abdo_list,
+      { visibilityMin: 0.15, color: zColor, fillColor: "rgb(18,38,243)" }
+    );
+      drawConnectors(canvasCtx, abdo_list, POSE_N_CONNECTIONS, {
+      visibilityMin: 0.35,
+      color: "rgb(142,239,131)",
+    });
   }
-
-  body_idxs = [11,12,13,14,15,16,23,24];
-  var abdo_list = []; 
-  for (var i=0; i<8; i++)
-  {
-    abdo_list.push(results.poseLandmarks[body_idxs[i]])
-  }
-
-  c_ab_x = (results.poseLandmarks[23].x + results.poseLandmarks[24].x) / 2;
-  c_ab_y = (results.poseLandmarks[23].y + results.poseLandmarks[24].y) / 2;
-  c_ab_z = (results.poseLandmarks[23].z + results.poseLandmarks[24].z) / 2;
-  c_ab_v = (results.poseLandmarks[23].visibility + results.poseLandmarks[24].visibility) / 2;
-
-  c_sh_x = (results.poseLandmarks[11].x + results.poseLandmarks[12].x) / 2;
-  c_sh_y = (results.poseLandmarks[11].y + results.poseLandmarks[12].y) / 2;
-  c_sh_z = (results.poseLandmarks[11].z + results.poseLandmarks[12].z) / 2;
-  c_sh_v = (results.poseLandmarks[11].visibility + results.poseLandmarks[12].visibility) / 2;
-
-  ratio_list = [1.5, 3, 6];
-  abdo_list.push({'x': c_sh_x, 'y':c_sh_y, 'z': c_sh_z, 'visibility': c_sh_v});
-  for (var i=0; i<3; i++)
-  { 
-    ratio = ratio_list[i];
-    _x = (c_sh_x + (ratio - 1) * c_ab_x) / ratio;
-    _y = (c_sh_y + (ratio - 1) * c_ab_y) / ratio;
-    _z = (c_sh_z + (ratio - 1) * c_ab_z) / ratio;
-    _v = (c_sh_v + (ratio - 1) * c_ab_v) / ratio;
-    abdo_list.push({'x': _x, 'y':_y, 'z': _z, 'visibility': _v})
-  }
-  drawLandmarks(
-    canvasCtx,
-    abdo_list,
-    { visibilityMin: 0.15, color: zColor, fillColor: "rgb(18,38,243)" }
-  );
-    drawConnectors(canvasCtx, abdo_list, POSE_N_CONNECTIONS, {
-    visibilityMin: 0.35,
-    color: "rgb(142,239,131)",
-  });
-
   canvasCtx.restore();
 }
 
