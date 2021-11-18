@@ -1,0 +1,7 @@
+cdn_packages/
+*.wasm
+*.data
+.DS_Store
+__pycache__
+*.tar
+*.gz
