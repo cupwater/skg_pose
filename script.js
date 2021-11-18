@@ -105,8 +105,6 @@ const pose = new Pose({
     // return `${file}`;
   },
 });
-
-canvasCtx.scale(-1,1);
 pose.onResults(onResults);
 
 
@@ -150,9 +148,8 @@ faceMesh.setOptions({
 });
 faceMesh.onResults(onResultsFaceMesh);
 
-
+canvasCtx.restore();
 pose.send({ image: myImage });
-// faceMesh.send({ image: myImage });
 /**
  * Instantiate a camera. We'll feed each frame we receive into the solution.
  */
