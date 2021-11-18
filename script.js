@@ -159,7 +159,7 @@ pose.send({ image: myImage });
 const camera = new Camera(videoElement, {
   onFrame: async () => {
     await pose.send({ image: videoElement });
-    // await faceMesh.send({ image: videoElement });
+    await faceMesh.send({ image: videoElement });
   },
   width: 720,
   height: 720,
