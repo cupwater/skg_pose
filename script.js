@@ -97,7 +97,7 @@ const pose = new Pose({
     }
     else
     {
-      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.1/${file}`;
+      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.2/${file}`;
     }
     // return `${file}`;
   },
@@ -132,7 +132,7 @@ const faceMesh = new FaceMesh({
     }
     else
     {
-      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.1/${file}`;
+      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.2/${file}`;
     }
     // return `${file}`;
   }
@@ -144,6 +144,15 @@ faceMesh.setOptions({
   minTrackingConfidence: 0.5
 });
 faceMesh.onResults(onResultsFaceMesh);
+
+canvasCtx.drawImage(
+  myImage,
+  0,
+  0,
+  canvasElement.width,
+  canvasElement.height
+);
+canvasCtx.restore();
 
 // canvasCtx.restore();
 // pose.send({ image: myImage });
