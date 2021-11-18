@@ -14,6 +14,7 @@ canvasCtx.drawImage(
   canvasElement.width,
   canvasElement.height
 );
+canvasCtx.restore();
 
 // We'll add this to our control panel later, but we'll save it here so we can
 // call tick() each time the graph runs.
@@ -44,7 +45,6 @@ function onResults(results) {
     canvasElement.width,
     canvasElement.height
   );
-
   if ('poseLandmarks' in results)
   {
 
@@ -145,8 +145,9 @@ faceMesh.setOptions({
 });
 faceMesh.onResults(onResultsFaceMesh);
 
-canvasCtx.restore();
-pose.send({ image: myImage });
+// canvasCtx.restore();
+// pose.send({ image: myImage });
+
 /**
  * Instantiate a camera. We'll feed each frame we receive into the solution.
  */
