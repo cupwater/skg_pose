@@ -76,14 +76,7 @@
   function t(a, b) {
     a.video.srcObject = b;
     a.video.onloadedmetadata = function () {
-      // if (/iphone|ipod|mac|ipad/i.test(navigator.userAgent.toLocaleLowerCase())) {
-        //$('html,body').on('touchstart', function() { //总是
-        $('html,body').one('touchstart', function() { //只一次   
-            a.video.play();     
-            // media.play();
-        })
-      // }
-      a.video.play();
+      a.video.play();     
       q(a);
     };
   }
