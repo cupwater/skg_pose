@@ -30,6 +30,104 @@ function zColor(data) {
   return "white";
 }
 
+function Queue() {
+  let items = [];
+  let max_num = 3;
+  // add element into queue
+  this.update = function (element) {
+    if (items.length >= max_num) {
+      this.dequeue();
+    }
+    items.push(element);
+  };
+
+  // add element into queue
+  this.enqueue = function (element) {
+    items.push(element);
+  };
+
+  // remove first element
+  this.dequeue = function () {
+    return items.shift();
+  };
+
+  // return first element
+  this.front = function () {
+    return items[0];
+  };
+
+  // judge if the queue is empty
+  this.isEmpty = function () {
+    return items.length === 0;
+  };
+
+  // return the length of queue
+  this.size = function () {
+    return items.length;
+  };
+
+  // clean the queue
+  this.clear = function () {
+    items = [];
+  };
+
+  // return the average of all elements in quene
+  this.average = function () {
+    element_length = items[0].length;
+    if (element_length == 5) {
+      let head_average = [];
+      for (var i=0; i<element_length; i++)
+      {
+        head_average.push({'x': 0, 'y':0, 'z': 0, 'visibility': 0});
+      }
+      for (var i = 0; i < items.length; i++) {
+        for (var j = 0; j < element_length; j++) {
+          head_average[j].x += items[i][j].x;
+          head_average[j].y += items[i][j].y;
+          head_average[j].z += items[i][j].z;
+          head_average[j].visibility += items[i][j].visibility;
+        }
+      }
+      for (var j = 0; j < element_length; j++) {
+        head_average[j].x = head_average[j].x / items.length;
+        head_average[j].y = head_average[j].y / items.length;
+        head_average[j].z = head_average[j].z / items.length;
+        // head_average[j].visibility = head_average[j].visibility / items.length;
+        head_average[j].visibility = 1;
+      }
+      return head_average;
+
+    }
+    else {
+      let abdo_average = [];
+      for (var i=0; i<element_length; i++)
+      {
+        abdo_average.push({'x': 0, 'y':0, 'z': 0, 'visibility': 0});
+      }
+      for (var i = 0; i < items.length; i++) {
+        for (var j = 0; j < element_length; j++) {
+          abdo_average[j].x += items[i][j].x;
+          abdo_average[j].y += items[i][j].y;
+          abdo_average[j].z += items[i][j].z;
+          abdo_average[j].visibility += items[i][j].visibility;
+        }
+      }
+      for (var j = 0; j < element_length; j++) {
+        abdo_average[j].x = abdo_average[j].x / items.length;
+        abdo_average[j].y = abdo_average[j].y / items.length;
+        abdo_average[j].z = abdo_average[j].z / items.length;
+        // abdo_average[j].visibility = abdo_average[j].visibility / items.length;
+        abdo_average[j].visibility = 1;
+      }
+      return abdo_average;
+    }
+  };
+}
+
+let body_queue = new Queue();
+let head_queue = new Queue();
+
+
 function onResults(results) {
   // Hide the spinner.
   document.body.classList.add("loaded");
@@ -76,13 +174,18 @@ function onResults(results) {
       _v = (c_sh_v + (ratio - 1) * c_ab_v) / ratio;
       abdo_list.push({'x': _x, 'y':_y, 'z': _z, 'visibility': _v})
     }
+
+    body_queue.update(abdo_list);
+    var abdo_averate = body_queue.average();
+
     drawLandmarks(
       canvasCtx,
-      abdo_list,
-      { visibilityMin: 0.15, color: zColor, fillColor: "rgb(18,38,243)" }
+      abdo_averate,
+      { visibilityMin: 0.15, color: zColor, fillColor: "rgb(18,38,243)", linewidth: 10, }
     );
-      drawConnectors(canvasCtx, abdo_list, POSE_N_CONNECTIONS, {
+      drawConnectors(canvasCtx, abdo_averate, POSE_N_CONNECTIONS, {
       visibilityMin: 0.35,
+      linewidth: 10,
       color: "rgb(142,239,131)",
     });
   }
@@ -113,12 +216,17 @@ function onResultsFaceMesh(results) {
       {
         newHeadlms[i].x = 1 - newHeadlms[i].x;
       }
+
+      head_queue.update(newHeadlms);
+      var head_average = head_queue.average();
+
       drawLandmarks(
         canvasCtx,
-        newHeadlms,
-        { visibilityMin: 0.15, color: zColor, fillColor: "rgb(243,62,18)" }
+        // newHeadlms,
+        head_average,
+        { visibilityMin: 0.15, color: zColor, fillColor: "rgb(243,62,18)", linewidth: 10, }
       );
-      drawConnectors(canvasCtx, newHeadlms, [[0, 1], [2, 3]],
+      drawConnectors(canvasCtx, head_average, [[0, 1], [2, 3]],
         { color: 'rgb(142,239,131)' });
     }
   }
