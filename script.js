@@ -30,6 +30,41 @@ function zColor(data) {
   return "white";
 }
 
+// compute the rotate angle in XYZ directions according the face landmarks
+// this function involves solvePnP in opencv.js  
+function getRotateAngle(data) {
+  let pts_3d = [
+    0.000000, 8.261778, 4.481535,
+    0.000000, -7.942194, 5.181173,
+    -7.664182, 0.673132, -2.435867,
+    7.664182,  0.673132, -2.435867,
+    0.000000, -1.126865, 7.475604,
+    -2.456206, -4.342621, 4.283884,
+    3.102642, -4.352984, 4.095905
+  ];
+  pts_3d = cv.matFromArray(7, 3, cv.CV_32F, pts_3d);
+  
+  let pts_2d = cv.matFromArray(7, 2, cv.CV_32F, data.image_points); 
+  let cameraMatrix = [data.img_w, 0.0, data.img_w/2,
+                      0.0, data.img_w, data.img_h/2,
+                      0.0, 0.0, 1.0];
+  cameraMatrix = cv.matFromArray(3, 3, cv.CV_64F, cameraMatrix);
+  
+  let distCoeffs = cv.matFromArray(5, 1, cv.CV_64F, [0.0, 0.0, 0.0, 0.0, 0.0]);
+  let rvecs = new cv.Mat(3, 1, cv.CV_64F) //, [3.252,   0.073, -0.043]);
+  let tvecs = new cv.Mat(3, 1, cv.CV_64F) //, [0.204, -33.344, 74.951]);
+
+  cv.solvePnP(pts_3d, pts_2d, cameraMatrix, distCoeffs, rvecs, tvecs, useExtrinsicGuess=false);
+  
+  let RM = new cv.Mat(3, 3, cv.CV_64F) 
+  cv.Rodrigues(rvecs, RM);
+  let theta_z = Math.atan2(RM.data64F[3], RM.data64F[0]) / 3.14 * 180;
+  let theta_y = Math.atan2(-1 * RM.data64F[6], Math.sqrt(RM.data64F[0] * RM.data64F[0] + RM.data64F[3] * RM.data64F[3])) / 3.14 * 180;
+  theta_x = Math.atan2(RM.data64F[7], RM.data64F[8]) / 3.14 * 180;
+  let result = {'x':theta_x, 'y':theta_y, 'z':theta_z};
+  return result;
+}
+
 function Queue() {
   let items = [];
   let max_num = 3;
@@ -200,7 +235,8 @@ const pose = new Pose({
     }
     else
     {
-      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.2/${file}`;
+      return `cdn_packages/pose0.5_face0.4/${file}`;
+      // return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.2/${file}`;
     }
     // return `${file}`;
   },
@@ -217,9 +253,23 @@ function onResultsFaceMesh(results) {
         newHeadlms[i].x = 1 - newHeadlms[i].x;
       }
 
+      // get the width and height of frame in user video
       head_queue.update(newHeadlms);
       var head_average = head_queue.average();
 
+      let img_w = 302;
+      let img_h = 571;
+      let image_points = []
+      let pts_idx = [10, 199, 234, 454, 1, 61, 287]
+      for (var i=0; i<7; i++) {
+        image_points.push(landmarks[i].x*img_w);
+        image_points.push(landmarks[i].y*img_h);
+      }
+      let lms_hw = {'image_points': image_points, 'img_h': img_h, 'img_w': img_w};
+      let rval = getRotateAngle(lms_hw)
+      console.log('X angle : ' + rval.x + '\tY angle : ' + rval.y + '\tZ angle : ' + rval.z);
+      // console.log('Y angle : ' + rval.y);
+      // console.log('Z angle : ' + rval.z);
       drawLandmarks(
         canvasCtx,
         // newHeadlms,
@@ -240,7 +290,8 @@ const faceMesh = new FaceMesh({
     }
     else
     {
-      return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.2/${file}`;
+      return `cdn_packages/pose0.5_face0.4/${file}`;
+      // return `https://cdn.jsdelivr.net/npm/@stevepeng/skg_pose@1.0.2/${file}`;
     }
     // return `${file}`;
   }
